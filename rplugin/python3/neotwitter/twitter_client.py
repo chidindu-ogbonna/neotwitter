@@ -42,8 +42,8 @@ class TwitterClient(object):
         :param user: A sqlalchemy model
         :return: auth:
         """
-        self.auth = tweepy.OAuthHandler(TwitterClient.consumer_key,
-                                        TwitterClient.consumer_secret)
+        self.auth = tweepy.OAuthHandler(self.consumer_key,
+                                        self.consumer_secret)
         self.auth.set_access_token(self.user.access_token,
                                    self.user.access_token_secret)
         return self.auth

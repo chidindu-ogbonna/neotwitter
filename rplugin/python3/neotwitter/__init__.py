@@ -60,6 +60,8 @@ class NeoTwitter(object):
         verifier = self.nvim.vars.get(NeoTwitter.VARIABLE)
         if verifier and self.get_tokens():
             self.nvim.out_write('[NeoTwitter] Setup was successful \n')
+        elif not verifier:
+            self.nvim.out_write('[NeoTwitter] Verifier has not been set \n')
         elif is_a_user_in_db():
             self.nvim.out_write('[NeoTwitter] A User record already exists \n')
         else:
