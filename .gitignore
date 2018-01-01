@@ -1,0 +1,20 @@
+# Ignore the python byte files
+*py[oc]
+.sw?
+.*.sw?
+
+# Sensitive files
+.env
+
+# ignore the db for now
+*.db*
+*.sqlite
+
+# Ignore byte files, editor folders and temp
+*/**/__pycache__/
+.vscode/
+.ropeproject/
+tmp/
+
+# Ignore auto generated files
+.coverage
