@@ -12,9 +12,10 @@ class TwitterClient(object):
 
         :param user: A sqlalchemy model """
 
-        self.user = user
         self.consumer_key = os.environ.get('NEOTWITTER_API_KEY')
         self.consumer_secret = os.environ.get('NEOTWITTER_SECRET_KEY')
+
+        self.user = user
         self.auth = tweepy.OAuthHandler(self.consumer_key, self.consumer_secret)
 
     def get_authorization_url(self):
@@ -42,8 +43,7 @@ class TwitterClient(object):
         :param user: A sqlalchemy model
         :return: auth:
         """
-        self.auth = tweepy.OAuthHandler(self.consumer_key,
-                                        self.consumer_secret)
+        self.auth = tweepy.OAuthHandler(self.consumer_key, self.consumer_secret)
         self.auth.set_access_token(self.user.access_token,
                                    self.user.access_token_secret)
         return self.auth

@@ -33,12 +33,9 @@ class NeoTwitter(object):
         else:
             return True
 
-    def get_tokens(self):
-        verifier = self.nvim.vars.get(NeoTwitter.VARIABLE)
-        if not verifier:
-            return False
-        access_token, access_secret = self.twitter_client.get_access_token(
-            verifier)
+    def get_tokens(self, verifier):
+        """:param verifier: Verifier from twitter API"""
+        access_token, access_secret = self.twitter_client.get_access_token(verifier)
         if access_token:
             return store_access_token_in_db(access_token, access_secret)
         return False
@@ -58,8 +55,10 @@ class NeoTwitter(object):
     @neovim.command("TwitterCompleteSetup", sync=True)
     def neo_twitter_complete_setup(self):
         verifier = self.nvim.vars.get(NeoTwitter.VARIABLE)
-        if verifier and self.get_tokens():
+        if verifier and self.get_tokens(verifier):
             self.nvim.out_write('[NeoTwitter] Setup was successful \n')
+        #  elif not self.get_tokens():
+        #      self.nvim.out_write('[NeoTwitter] Not getting access tokens \n')
         elif not verifier:
             self.nvim.out_write('[NeoTwitter] Verifier has not been set \n')
         elif is_a_user_in_db():
@@ -80,7 +79,7 @@ class NeoTwitter(object):
             #  TODO:  <01-01-18, Chidindu Ogbonna> # 
             # Add the functionality of saving in db after tweeting
             try:
-                auth.update_status(message)
+                auth.update_with_media(take_screenshot(), status=message)
                 self.nvim.out_write(
                     '[NeoTwitter: Your first tweet] Tweeted colorscheme is "{}" \n'.
                     format(colorscheme))
@@ -89,7 +88,6 @@ class NeoTwitter(object):
         elif is_a_week_since_last_tweet():
             try:
                 auth.update_with_media(take_screenshot(), status=message)
-                #  auth.update_status(message)
                 self.nvim.out_write(
                     '[NeoTwitter] Tweeted colorscheme is "{}" \n'.format(
                         colorscheme))
