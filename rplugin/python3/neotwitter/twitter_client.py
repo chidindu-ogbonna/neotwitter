@@ -7,16 +7,17 @@ import tweepy
 class TwitterClient(object):
     """ A Twitter Client """
 
+    CONSUMER_KEY = os.environ.get('NEOTWITTER_API_KEY')
+    CONSUMER_SECRET = os.environ.get('NEOTWITTER_SECRET_KEY')
+
+
     def __init__(self, user):
         """ Client instance Constructor
 
         :param user: A sqlalchemy model """
 
-        self.consumer_key = os.environ.get('NEOTWITTER_API_KEY')
-        self.consumer_secret = os.environ.get('NEOTWITTER_SECRET_KEY')
-
         self.user = user
-        self.auth = tweepy.OAuthHandler(self.consumer_key, self.consumer_secret)
+        self.auth = tweepy.OAuthHandler(self.CONSUMER_KEY, self.CONSUMER_SECRET)
 
     def get_authorization_url(self):
         """ Opens a browser page to the the url given by the Twitter API service
@@ -43,7 +44,7 @@ class TwitterClient(object):
         :param user: A sqlalchemy model
         :return: auth:
         """
-        self.auth = tweepy.OAuthHandler(self.consumer_key, self.consumer_secret)
+        self.auth = tweepy.OAuthHandler(self.CONSUMER_KEY, self.CONSUMER_SECRET)
         self.auth.set_access_token(self.user.access_token,
                                    self.user.access_token_secret)
         return self.auth
