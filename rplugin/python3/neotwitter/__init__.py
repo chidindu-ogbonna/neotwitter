@@ -13,7 +13,7 @@ class NeoTwitter(object):
     file_path = '/tmp/tweet.twitter'
     VARIABLE = 'neotwitter_verifier'
     CHAR_LENGTH = 140
-    COLORSCHEME_MESSAGE = 'I am using "{}" colorscheme for the week. #Neovim #Vim #NeoTwitter'
+    COLORSCHEME_MESSAGE = 'Using the "{}" colorscheme. #Neovim #Vim #NeoTwitter'
     FILETYPE = 'twitter'
 
     def __init__(self, nvim):
@@ -37,14 +37,6 @@ class NeoTwitter(object):
             "vs " + NeoTwitter.file_path.format(NeoTwitter.FILETYPE))
         self.nvim.command("set ft={}".format(NeoTwitter.FILETYPE))
 
-    def _response_from_get_authorization(self):
-        status = self.twitter_client.get_authorization()
-        return status
-
-    def _response_from_get_tokens(self, verifier):
-        status = self.twitter_client.get_tokens(verifier)
-        return status
-
     def is_verifier_set(self):
         if self.nvim.vars.get(NeoTwitter.VARIABLE):
             return True
@@ -65,7 +57,7 @@ class NeoTwitter(object):
                 '[NeoTwitter] Info: Delete your Verifier and restart the setup \n'
             )
         if not self.is_verifier_set():  # and not get_request_token_from_db():
-            status = self._response_from_get_authorization()
+            status = self.twitter_client.get_authorization()
             if True in status:
                 self.nvim.out_write(
                     '[NeoTwitter] Info: Please check your browser and save your "verifier" \n'
@@ -81,7 +73,7 @@ class NeoTwitter(object):
                 '[NeoTwitter] Info: A User already in the storage.db, Delete the file if neccessary \n'
             )
         if self.is_verifier_set() and not user_in_db():
-            if self._response_from_get_tokens(self.get_verifier()):
+            if self.twitter_client.get_tokens(self.get_verifier()):
                 self.nvim.out_write(
                     '[NeoTwitter] Info: Setup was successful \n')
             else:
