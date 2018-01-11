@@ -1,6 +1,6 @@
-from datetime import datetime
 import os
-from sqlalchemy import Column, DateTime, String, create_engine, Integer
+
+from sqlalchemy import Column, Integer, PickleType, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -23,16 +23,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     access_token = Column(String(64))
     access_token_secret = Column(String(64))
+    request_token = Column(PickleType)
 
     def __repr__(self):
         return '<User {}>'.format(self.id)
-
-
-class Tweets(Base):
-    __tablename__ = 'tweetcount'
-
-    id = Column(Integer, primary_key=True)
-    tweet_date = Column(DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return '<Tweet {}>'.format(self.id)
