@@ -70,7 +70,7 @@ class NeoTwitter(object):
     def complete_setup(self):
         if user_in_db():
             return self.nvim.out_write(
-                '[NeoTwitter] Info: A User already in the storage.db, Delete the file if neccessary \n'
+                '[NeoTwitter] Info: A User already in the storage.db, Go on "Tweeting" or x"Delete"x the file if neccessary \n'
             )
         if self.is_verifier_set() and not user_in_db():
             if self.twitter_client.get_tokens(self.get_verifier()):
