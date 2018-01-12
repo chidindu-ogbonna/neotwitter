@@ -31,20 +31,21 @@ class TwitterClient(object):
         return webbrowser.open_new_tab(redirect_url), 'Success'
 
     def get_tokens(self, verifier):
-        """ 
+        """
         Gets the token from the Twitter API using a verifier stored in the
-        Text global variables
-        Stores the access_token and access_token_secret in the database
+        text editor global variables.
 
-        :param verifier: g:neotwitter_verifier gotten through the 
-        get_authorization method
+        Stores the access_tokens in the database which is a tuple of
+        a 'key' and a 'secret'
+
+        :param verifier: g:neotwitter_verifier
         :returns: a boolean """
         try:
             self.auth.request_token = get_request_token_from_db()
             access_token = self.auth.get_access_token(verifier)
         except tweepy.TweepError as e:
             return False
-        store_access_token_in_db(access_token[0], access_token[1])
+        store_access_token_in_db(access_token)
         return True
 
     def _rebuild_auth(self):
