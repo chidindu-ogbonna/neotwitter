@@ -21,7 +21,12 @@ class TwitterClient(object):
                                         self.CONSUMER_SECRET)
 
     def get_authorization(self):
-        """ :returns: a tuple (boolean, status_message) """
+        """ 
+        Get authorization from the Twitter API
+
+        Stores the request_token and opens a browser
+
+        :returns: a tuple (boolean, status_message) """
         try:
             redirect_url = self.auth.get_authorization_url()
         except tweepy.TweepError as e:

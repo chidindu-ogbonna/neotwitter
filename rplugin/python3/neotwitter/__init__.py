@@ -50,17 +50,17 @@ class NeoTwitter(object):
     def start_setup(self):
         if self.is_verifier_set() and get_request_token_from_db():
             return self.nvim.out_write(
-                '[NeoTwitter] Info: Verifier has already been set, run "TwitterCompleteSetup" to continue setup \n'
+                '[NeoTwitter] Info: Verifier has already been set, run ":TwitterCompleteSetup" to complete setup \n'
             )
         if self.is_verifier_set() and not get_request_token_from_db():
             return self.nvim.out_write(
-                '[NeoTwitter] Info: Delete your Verifier and restart the setup \n'
+                '[NeoTwitter] Error: Delete your Verifier and restart the setup \n'
             )
         if not self.is_verifier_set():  # and not get_request_token_from_db():
             status = self.twitter_client.get_authorization()
             if True in status:
                 self.nvim.out_write(
-                    '[NeoTwitter] Info: Please check your browser and save your "verifier" \n'
+                    '[NeoTwitter] Info: Please check your browser, authorize the application and store your verifier in your vimrc \n'
                 )
             elif False in status:
                 self.nvim.out_write('[NeoTwitter] Error: {} \n'.format(
@@ -110,7 +110,7 @@ class NeoTwitter(object):
         buffer_content = self.nvim.current.buffer[:]
         length = len('. '.join(buffer_content))
         self.nvim.out_write(
-            '[NeoTwitter] Info: Tweet Length is {} \n'.format(length))
+            '[NeoTwitter] Info: Length of Tweet is {} characters \n'.format(length))
 
     @neovim.command("TweetPost")
     def post_tweet(self):
