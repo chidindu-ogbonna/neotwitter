@@ -22,6 +22,10 @@ class NeoTwitter(object):
         self.nvim = nvim
         self.twitter_client = TwitterClient()
 
+        self.note_msg = '[NeoTwitter] Note:'
+        self.info_msg = '[NeoTwitter] Info:'
+        self.error_msg= '[NeoTwitter] Error:'
+
     def _trim_buffer(self):
         buffer_content = self.nvim.current.buffer[:]
         # should not exceed CHAR_LENGTH
@@ -50,39 +54,37 @@ class NeoTwitter(object):
     def start_setup(self):
         if self.is_verifier_set() and get_request_token_from_db():
             return self.nvim.out_write(
-                '[NeoTwitter] Info: Verifier has already been set, run ":TwitterCompleteSetup" to complete setup \n'
-            )
+                '{} Verifier has already been set, run ":TwitterCompleteSetup" to complete setup \n'
+            ).format(self.info_msg)
         if self.is_verifier_set() and not get_request_token_from_db():
             return self.nvim.out_write(
-                '[NeoTwitter] Error: Delete your Verifier and restart the setup \n'
-            )
+                '{} Delete your Verifier and restart the setup \n'
+            ).format(self.error_msg)
         if not self.is_verifier_set():  # and not get_request_token_from_db():
             status = self.twitter_client.get_authorization()
             if True in status:
                 self.nvim.out_write(
-                    '[NeoTwitter] Info: Please check your browser, authorize the application and store your verifier in your vimrc \n'
-                )
+                    '{} Please check your browser, authorize the application and store your verifier in your vimrc \n'
+                ).format(self.info_msg)
             elif False in status:
-                self.nvim.out_write('[NeoTwitter] Error: {} \n'.format(
-                    status[1]))
+                self.nvim.out_write('{} {} \n'.format(self.error_msg, status[1]))
 
     @neovim.command("TwitterCompleteSetup", sync=True)
     def complete_setup(self):
         if user_in_db():
             return self.nvim.out_write(
-                '[NeoTwitter] Info: A User already in the storage.db, Go on "Tweeting" or x"Delete"x the file if neccessary \n'
-            )
+                '{} A User already in the storage.db, Go on "Tweeting" or x"Delete"x the file if neccessary \n'
+            ).self.format(self.info_msg)
         if self.is_verifier_set() and not user_in_db():
             if self.twitter_client.get_tokens(self.get_verifier()):
-                self.nvim.out_write(
-                    '[NeoTwitter] Info: Setup was successful \n')
+                self.nvim.out_write('{} Setup was successful \n').self.note_msg
             else:
                 self.nvim.out_write(
-                    '[NeoTwitter] Error: Something went wrong, could not connect to Twitter API \n'
-                )
+                    '{} Something went wrong, could not connect to Twitter API \n'
+                ).format(self.error_msg)
         else:
             self.nvim.out_write(
-                '[NeoTwitter] Error: Verifier has not been set \n')
+                '{} Verifier has not been set \n').format(self.error_msg)
 
     @neovim.command("TweetColorscheme")
     def tweet_colorscheme(self):
@@ -92,25 +94,24 @@ class NeoTwitter(object):
         try:
             auth.update_with_media(take_screenshot(), status=message)
         except tweepy.TweepError as e:
-            self.nvim.out_write('[NeoTwitter] Error: {} \n'.format(e))
+            self.nvim.out_write('{} {} \n'.format(self.error_msg, e))
             return
         self.nvim.out_write(
-            '[NeoTwitter] Info: Tweeted colorscheme was "{}" \n'.format(
-                colorscheme))
+            '{} Tweeted colorscheme was "{}" \n'.format(self.note_msg, colorscheme))
 
     @neovim.command("TweetCompose")
     def compose_tweet(self):
         self._set_twitter_buffer()
         self.nvim.out_write(
-            '[NeoTwitter] Note: If longer than 140 characters, your tweet would be reduced to 140, use "TweetCheckCharacterLength" to check the length \n'
-        )
+            '{} If longer than 140 characters, your tweet would be reduced to 140, use "TweetCheckCharacterLength" to check the length \n'
+        ).format(self.note_msg)
 
     @neovim.command("TweetCheckCharacterLength", sync=True)
     def check_length(self):
         buffer_content = self.nvim.current.buffer[:]
         length = len('. '.join(buffer_content))
         self.nvim.out_write(
-            '[NeoTwitter] Info: Length of Tweet is {} characters \n'.format(length))
+            '{} Length of Tweet is {} characters \n'.format(self.info_msg, length))
 
     @neovim.command("TweetPost")
     def post_tweet(self):
@@ -121,18 +122,18 @@ class NeoTwitter(object):
                 auth = self.twitter_client.build_api()
                 auth.update_status(tweet)
             except tweepy.TweepError as e:
-                self.nvim.out_write('[NeoTwitter] Error: {} \n'.format(e))
+                return self.nvim.out_write('{} {} \n'.format(self.error_msg, e))
             except Exception as e:
-                self.nvim.out_write('[NeoTwitter] Error: {} \n'.format(e))
-            self.nvim.out_write('[NeoTwitter] Info: Your tweet was sent \n')
+                return self.nvim.out_write('{} {} \n'.format(self.error_msg, e))
+            self.nvim.out_write('{} Your tweet was sent \n').format(self.info_msg)
         else:
             self.nvim.out_write(
-                '[NeoTwitter] Info: This is not a tweet file \n')
+                '{} This is not a tweet file \n').format(self.info_msg)
 
     @neovim.autocmd('BufEnter', pattern='*.twitter', eval='expand("<afile>")')
     def on_bufenter(self, filename):
         buffer_ = self.nvim.current.buffer
         if '/tmp/' not in buffer_.name:
             self.nvim.out_write(
-                '[NeoTwitter] Note: {} is a Tweet file but does not exist in the proper directory. It will not be posted \n'.
-                format(NeoTwitter.buffer_.name))
+                '{} {} is a Tweet file but does not exist in the proper directory. It will not be posted \n'.
+                format(self.note_msg, NeoTwitter.buffer_.name))
