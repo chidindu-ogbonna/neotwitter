@@ -21,12 +21,7 @@ class TwitterClient(object):
                                         self.CONSUMER_SECRET)
 
     def get_authorization(self):
-        """ 
-        Get authorization from the Twitter API
-
-        Stores the request_token and opens a browser
-
-        :returns: a tuple (boolean, status_message) """
+        """:returns: a tuple (boolean, status_message) """
         try:
             redirect_url = self.auth.get_authorization_url()
         except tweepy.TweepError as e:
@@ -36,14 +31,7 @@ class TwitterClient(object):
         return webbrowser.open_new_tab(redirect_url), 'Success'
 
     def get_tokens(self, verifier):
-        """
-        Gets the token from the Twitter API using a verifier stored in the
-        text editor global variables.
-
-        Stores the access_tokens in the database which is a tuple of
-        a 'key' and a 'secret'
-
-        :param verifier: g:neotwitter_verifier
+        """:param verifier: g:neotwitter_verifier
         :returns: a boolean """
         try:
             self.auth.request_token = get_request_token_from_db()
