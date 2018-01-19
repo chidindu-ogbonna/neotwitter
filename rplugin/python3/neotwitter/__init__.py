@@ -24,7 +24,7 @@ class NeoTwitter(object):
 
         self.note_msg = '[NeoTwitter] Note:'
         self.info_msg = '[NeoTwitter] Info:'
-        self.error_msg= '[NeoTwitter] Error:'
+        self.error_msg = '[NeoTwitter] Error:'
 
     def _trim_buffer(self):
         buffer_content = self.nvim.current.buffer[:]

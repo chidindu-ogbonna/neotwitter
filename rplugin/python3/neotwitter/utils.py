@@ -23,11 +23,8 @@ def user_in_db():
 
 
 def take_screenshot():
-    """
-    Take screenshot using the pyscreenshot module
-
-    :returns: str (location to the screenshot file)
-    """
+    """ Take a screenshot using the pyscreenshot module
+    :Returns: a str (location to the screenshot file) """
     screenshot_file = '/tmp/screenshot.png'
     try:
         os.remove(screenshot_file)
