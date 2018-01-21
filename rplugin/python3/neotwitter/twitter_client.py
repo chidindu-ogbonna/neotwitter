@@ -25,10 +25,11 @@ class TwitterClient(object):
         try:
             redirect_url = self.auth.get_authorization_url()
         except tweepy.TweepError as e:
-            return False, '{}'.format(e)
+            raise tweepy.TweepError('{}'.format(e))
+            #  return False, '{}'.format(e)
         store_request_token_in_db(self.auth.request_token)
         # Evaluates to True
-        return webbrowser.open_new_tab(redirect_url), 'Success'
+        return webbrowser.open_new_tab(redirect_url)
 
     def get_tokens(self, verifier):
         """:param verifier: g:neotwitter_verifier

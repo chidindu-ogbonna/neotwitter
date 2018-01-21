@@ -58,16 +58,17 @@ class NeoTwitter(object):
             ).format(self.info_msg)
         if self.is_verifier_set() and not get_request_token_from_db():
             return self.nvim.out_write(
-                '{} Delete your Verifier and restart the setup \n'
-            ).format(self.error_msg)
+                '{} Delete your Verifier and restart the setup \n').format(
+                    self.error_msg)
         if not self.is_verifier_set():  # and not get_request_token_from_db():
-            status = self.twitter_client.get_authorization()
-            if True in status:
-                self.nvim.out_write(
-                    '{} Please check your browser, authorize the application and store your verifier in your vimrc \n'
-                ).format(self.info_msg)
-            elif False in status:
-                self.nvim.out_write('{} {} \n'.format(self.error_msg, status[1]))
+            try:
+                self.twitter_client.get_authorization()
+            except tweepy.TweepError as e:
+                return self.nvim.out_write('{} {} \n'.format(
+                    self.error_msg, e))
+            self.nvim.out_write(
+                '{} Please check your browser, authorize the application and store your verifier in your vimrc \n'
+            ).format(self.info_msg)
 
     @neovim.command("TwitterCompleteSetup", sync=True)
     def complete_setup(self):
@@ -83,8 +84,8 @@ class NeoTwitter(object):
                     '{} Something went wrong, could not connect to Twitter API \n'
                 ).format(self.error_msg)
         else:
-            self.nvim.out_write(
-                '{} Verifier has not been set \n').format(self.error_msg)
+            self.nvim.out_write('{} Verifier has not been set \n').format(
+                self.error_msg)
 
     @neovim.command("TweetColorscheme")
     def tweet_colorscheme(self):
@@ -96,8 +97,8 @@ class NeoTwitter(object):
         except tweepy.TweepError as e:
             self.nvim.out_write('{} {} \n'.format(self.error_msg, e))
             return
-        self.nvim.out_write(
-            '{} Tweeted colorscheme was "{}" \n'.format(self.note_msg, colorscheme))
+        self.nvim.out_write('{} Tweeted colorscheme was "{}" \n'.format(
+            self.note_msg, colorscheme))
 
     @neovim.command("TweetCompose")
     def compose_tweet(self):
@@ -110,8 +111,8 @@ class NeoTwitter(object):
     def check_length(self):
         buffer_content = self.nvim.current.buffer[:]
         length = len('. '.join(buffer_content))
-        self.nvim.out_write(
-            '{} Length of Tweet is {} characters \n'.format(self.info_msg, length))
+        self.nvim.out_write('{} Length of Tweet is {} characters \n'.format(
+            self.info_msg, length))
 
     @neovim.command("TweetPost")
     def post_tweet(self):
@@ -122,13 +123,16 @@ class NeoTwitter(object):
                 auth = self.twitter_client.build_api()
                 auth.update_status(tweet)
             except tweepy.TweepError as e:
-                return self.nvim.out_write('{} {} \n'.format(self.error_msg, e))
+                return self.nvim.out_write('{} {} \n'.format(
+                    self.error_msg, e))
             except Exception as e:
-                return self.nvim.out_write('{} {} \n'.format(self.error_msg, e))
-            self.nvim.out_write('{} Your tweet was sent \n').format(self.info_msg)
+                return self.nvim.out_write('{} {} \n'.format(
+                    self.error_msg, e))
+            self.nvim.out_write('{} Your tweet was sent \n').format(
+                self.info_msg)
         else:
-            self.nvim.out_write(
-                '{} This is not a tweet file \n').format(self.info_msg)
+            self.nvim.out_write('{} This is not a tweet file \n').format(
+                self.info_msg)
 
     @neovim.autocmd('BufEnter', pattern='*.twitter', eval='expand("<afile>")')
     def on_bufenter(self, filename):
