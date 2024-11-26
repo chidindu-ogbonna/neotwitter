@@ -1,2 +1,2 @@
 # NeoTwitter
-A twitter client to use Neovim without leaving vim.
+A twitter client to use Twitter straight from Neovim.
